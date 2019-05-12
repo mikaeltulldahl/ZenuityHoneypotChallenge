@@ -20,6 +20,7 @@ class Solution {
   int robotY = MAP_SIZE / 2;
   int map[MAP_SIZE][MAP_SIZE] =
       {};  // possible values: UNSEEN, EMPTY, UNKNOWN, WALL
+  char canvas[MAP_SIZE][MAP_SIZE] = {};
   int enemyCount;
   int enemyState[4];  // possible values: UNKNOWN, WALL, ENEMY
   int enemyX[4];      // -1: no enemy for certain, 0-MAP_SIZE: coord for enemy
@@ -106,7 +107,10 @@ class Solution {
    */
   void update() {
     updateMap();
-    drawMap();
+    plotMapOnCanvas();
+    plotRobotOnCanvas();
+    plotEnemiesOnCanvas();
+    drawCanvas();
 
     // prio 1: shot/turn towards nearest enemy
     // prio 2: turn to nearest unexplored dir
@@ -234,7 +238,68 @@ class Solution {
     return x >= 0 && x < MAP_SIZE && y >= 0 && y < MAP_SIZE;
   }
 
-  void drawMap() {
+  void plotMapOnCanvas() {
+    for (int i = 0; i < MAP_SIZE; i++) {    // x
+      for (int j = 0; j < MAP_SIZE; j++) {  // y
+        char c;
+        switch (map[i][j]) {
+          case UNSEEN:
+            c = '-';
+            break;
+          case EMPTY:
+            c = ' ';
+            break;
+          case UNKNOWN:
+            c = '?';
+            break;
+          case WALL:
+            c = '#';
+            break;
+          default:
+            c = 'e';
+            cout << "incorrect map element" << endl;
+            break;  // error
+        }
+        canvas[i][j] = c;
+      }
+    }
+  }
+
+  void plotRobotOnCanvas() {
+    if (isInMap(robotX, robotY)) {
+      char c;
+      switch (heading) {
+        case 0:
+          c = '>';
+          break;
+        case 1:
+          c = '^';
+          break;
+        case 2:
+          c = '<';
+          break;
+        case 3:
+          c = 'v';
+          break;
+        default:
+          c = 'Q';
+          cout << "incorrect heading" << endl;
+          break;  // error
+      }
+      canvas[robotX][robotY] = c;
+    }
+  }
+
+  void plotEnemiesOnCanvas() {
+    for (int i = 0; i < 4; i++) {
+      if (isInMap(enemyX[i], enemyY[i])) {
+        canvas[enemyX[i]][enemyY[i]] = 'O';
+      }
+    }
+  }
+
+  void drawCanvas() {
+    // Line above
     for (int j = 0; j < MAP_SIZE; j++) {
       cout << '_';
     }
@@ -242,59 +307,12 @@ class Solution {
 
     for (int j = (MAP_SIZE - 1); j >= 0; j--) {  // y
       for (int i = 0; i < MAP_SIZE; i++) {       // x
-        bool tileHasEnemy = false;
-        for (int n = 0; n < 4; n++) {
-          if (enemyX[n] == i && enemyY[n] == j) {
-            tileHasEnemy = true;
-            break;
-          }
-        }
-        char c = 'e';        // if 'e' is shown, something went wrong
-        if (tileHasEnemy) {  // enemy
-          c = 'O';
-        } else if (robotX == i && robotY == j) {  // robot
-          switch (heading) {
-            case 0:
-              c = '>';
-              break;
-            case 1:
-              c = '^';
-              break;
-            case 2:
-              c = '<';
-              break;
-            case 3:
-              c = 'v';
-              break;
-            default:
-              c = 'Q';
-              cout << "incorrect heading" << endl;
-              break;  // error
-          }
-        } else {
-          switch (map[i][j]) {
-            case UNSEEN:
-              c = '-';
-              break;
-            case EMPTY:
-              c = ' ';
-              break;
-            case UNKNOWN:
-              c = '?';
-              break;
-            case WALL:
-              c = '#';
-              break;
-            default:
-              c = 'A';
-              cout << "incorrect map element" << endl;
-              break;  // error
-          }
-        }
-        cout << c;
+        cout << canvas[i][j];
       }
       cout << endl;
     }
+
+    // Line below
     for (int j = 0; j < MAP_SIZE; j++) {
       cout << '_';
     }
