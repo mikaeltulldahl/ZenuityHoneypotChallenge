@@ -82,13 +82,13 @@ class Solution {
 
   void turnToDirLocal(int dirLocal) {
     switch (dirLocal) {
-      case 1:
+      case LEFT:
         turnLeft();
         break;
-      case 2:
+      case BACKWARD:
         turnLeft();
         break;
-      case 3:
+      case RIGHT:
         turnRight();
         break;
       default:
@@ -123,13 +123,13 @@ class Solution {
   // total number of turns required to reach direction
   int dir2TurnCount(int dir) {
     switch (dir) {
-      case 0:
+      case FORWARD:
         return 0;
-      case 1:
+      case LEFT:
         return 1;
-      case 2:
+      case BACKWARD:
         return 2;
-      case 3:
+      case RIGHT:
         return 1;
       default:
         cout << "incorrect dir in dir2TurnCount" << endl;
@@ -193,7 +193,7 @@ class Solution {
     bool prioritizeEnemies = (nearestEnemyDist <= (nearestUnknownDist + 2));
     if (hasThreats) {
       if (prioritizeEnemies) {
-        if (nearestEnemyDirLocal == 0) {  // enemy in front
+        if (nearestEnemyDirLocal == FORWARD) {  // enemy in front
           if (nearestEnemyDist <= 3) {    // close enough to shoot
             API::fireCannon();
             cout << "Action: Fire" << endl;
@@ -211,7 +211,7 @@ class Solution {
       }
     } else {
 #define MOVES_NUM 15
-#define CANDIDATES_NUM 50
+#define CANDIDATES_NUM 1000
       int pathCandidates[MOVES_NUM][CANDIDATES_NUM];  // 5 moves, 10 candidates
       int bestScore = 0;
       int bestFirstMove = STAND_STILL;
@@ -423,16 +423,16 @@ class Solution {
     if (isInMap(robotX, robotY)) {
       char c;
       switch (robotHeading) {
-        case 0:
+        case FORWARD:
           c = '>';
           break;
-        case 1:
+        case LEFT:
           c = '^';
           break;
-        case 2:
+        case BACKWARD:
           c = '<';
           break;
-        case 3:
+        case RIGHT:
           c = 'v';
           break;
         default:
@@ -476,16 +476,16 @@ class Solution {
   // will add dist in dir to xy coordinate
   void addXY(int dir, int dist, int* xPtr, int* yPtr) {
     switch (dir) {
-      case 0:
+      case FORWARD:
         *xPtr += dist;
         break;
-      case 1:
+      case LEFT:
         *yPtr += dist;
         break;
-      case 2:
+      case BACKWARD:
         *xPtr -= dist;
         break;
-      case 3:
+      case RIGHT:
         *yPtr -= dist;
         break;
       default:
@@ -502,13 +502,13 @@ class Solution {
   // returns range for lidar in dirWorld direction
   int lidarLocal(int dirLocal) {
     switch (dirLocal) {
-      case 0:
+      case FORWARD:
         return API::lidarFront();
-      case 1:
+      case LEFT:
         return API::lidarLeft();
-      case 2:
+      case BACKWARD:
         return API::lidarBack();
-      case 3:
+      case RIGHT:
         return API::lidarRight();
       default:
         cout << "incorrect dirWorld in lidarWorld" << endl;
